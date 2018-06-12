@@ -18,7 +18,7 @@ start:
 Main:
 
 
-		    push 0                      ;creates space in stack
+		    	push 0                      ;creates space in stack
 			pushad                      ;save the state of all registers
 			pushfd                      ; save the state of all flags
 			push ebp
