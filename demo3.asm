@@ -17,59 +17,42 @@ start:
     
 Main:
 
-pToAbsolut:
-    sub esp,4
-    pushad
-    push ebp
-    mov ebp,esp
-    mov ebx,[ebp+40]
-    push ebx
-    call func_absolut
-    add esp,4
-    mov [ebp+36],eax
-    popad
-    mov ebx,[esp]
-    add esp,4
-    jmp ebx 
 
-pToRelative:       
+		    push 0                      ;creates space in stack
+			pushad                      ;save the state of all registers
+			pushfd                      ; save the state of all flags
+			push ebp
+			mov ebp, esp
+			mov ebx, [ebp + 44]         ;pick calling address and save to stack
+			sub ebx, 5
+			push ebx
+			call translateAddrFun		
+			add esp, 8
+			mov[ebp + 40], eax          ;in stack is saving a pointer to function
+			popfd
+			popad
+			add esp, 4
+			jmp DWORD PTR SS : [esp - 4];jump to real function address
 
-    sub esp,4
-    pushad
-    push ebp
-    mov ebp,esp
-    mov ebx,[ebp+40]
-    push ebx
-    call func_relative
-    add esp,4
-    mov [ebp+36],eax
-    popad
-    mov ebx,[esp]
-    add esp,4
-    jmp DWORD PTR DS:[ebx] 
+			nop
 
-func_absolut:
+			push 0                      
+			pushad                      
+			pushfd                      
+			push ebp
+			mov ebp, esp
+			mov ebx, [ebp + 44]         
+			sub ebx, 5
+			push ebx
+			call translateAddrFun		
+			add esp, 8
+			mov ebx, [eax]
+			mov[ebp + 40], ebx          
+			popfd
+			popad
+			add esp, 4
+			jmp DWORD PTR SS : [esp - 4]
 
-    push ebp
-    mov ebp,esp
-    mov ebx,[ebp+8]
-    sub ebx, 5
-                        ; adding fucntion to sending to out blackbox
-    mov esp,ebp
-    pop ebp
-    ret
-	
-    
-func_relative:
-
-    push ebp
-    mov ebp,esp
-    mov ebx,[ebp+8]
-    sub ebx, 6
-                        ; adding fucntion to sending to out blackbox
-    mov esp,ebp
-    pop ebp
-    ret 
 
 End Main
 
